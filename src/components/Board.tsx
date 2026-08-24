@@ -1,6 +1,9 @@
 import type { CSSProperties } from 'react'
 import { MAX_GUESSES, WORD_LENGTH, type Guess, type LetterState } from '../game/types'
 
+/** Per-tile delay of the reveal flip. Ten tiles at 250ms would drag. */
+const FLIP_STAGGER_MS = 100
+
 interface TileProps {
   letter: string
   state: LetterState
@@ -14,7 +17,7 @@ function Tile({ letter, state, index, revealed }: TileProps) {
     <div
       className={`tile${revealed ? ' revealed' : ''}${letter && !revealed ? ' filled' : ''}`}
       data-state={state}
-      style={{ '--delay': `${index * 250}ms` } as CSSProperties}
+      style={{ '--delay': `${index * FLIP_STAGGER_MS}ms` } as CSSProperties}
     >
       <span>{letter}</span>
     </div>
@@ -55,7 +58,12 @@ export function Board({ guesses, currentGuess, shaking }: BoardProps) {
   const emptyRows = Math.max(0, MAX_GUESSES - guesses.length - 1)
 
   return (
-    <div className="board">
+    <div
+      className="board"
+      style={
+        { '--word-length': WORD_LENGTH, '--max-guesses': MAX_GUESSES } as CSSProperties
+      }
+    >
       {guesses.map((guess, i) => (
         <Row key={i} guess={guess} />
       ))}

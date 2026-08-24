@@ -105,18 +105,21 @@ body {
 
 /* Board --------------------------------------------------------------- */
 
+/* --word-length and --max-guesses are set inline from the game constants, so
+   changing the word length in types.ts reshapes the grid with no CSS edit. */
 .board {
   display: grid;
-  grid-template-rows: repeat(6, 1fr);
-  gap: 5px;
-  width: min(100%, 350px);
-  aspect-ratio: 350 / 420;
+  grid-template-rows: repeat(var(--max-guesses), 1fr);
+  gap: 4px;
+  width: min(100%, 56dvh);
+  /* Square cells: same count of rows and columns, same gaps both ways. */
+  aspect-ratio: var(--word-length) / var(--max-guesses);
 }
 
 .row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(var(--word-length), 1fr);
+  gap: 4px;
 }
 
 .tile {
@@ -124,7 +127,7 @@ body {
   align-items: center;
   justify-content: center;
   border: 2px solid var(--border);
-  font-size: clamp(1.5rem, 8vw, 2rem);
+  font-size: clamp(0.7rem, 3.4vw, 1.5rem);
   font-weight: 700;
   line-height: 1;
   text-transform: uppercase;

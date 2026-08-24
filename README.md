@@ -1,7 +1,8 @@
 # Wordle clone
 
-A React + TypeScript shell for a Wordle clone. The UI, keyboard handling, and
-the daily-word API are done — the game logic is left for you to write.
+A React + TypeScript shell for a Wordle clone, played with **10-letter words
+and 10 guesses**. The UI, keyboard handling, and the daily-word API are done —
+the game logic is left for you to write.
 
 ## Getting started
 
@@ -16,7 +17,8 @@ npm run dev        # http://localhost:5173 — serves the UI *and* /api/*
 | --- | --- |
 | `src/game/logic.ts` | **Start here.** Four pure functions, currently stubbed. |
 | `src/game/logic.test.ts` | Tests for those functions. They fail until you write them. |
-| `src/game/types.ts` | `LetterState`, `Guess`, word length / guess count. |
+| `src/game/answers.test.ts` | Guards the word list against the board's dimensions. |
+| `src/game/types.ts` | `LetterState`, `Guess`, and the `WORD_LENGTH` / `MAX_GUESSES` constants. |
 | `src/game/useGame.ts` | Keystroke plumbing; calls into `logic.ts`. |
 | `src/components/` | `Board` (tiles, flip + shake animations) and `Keyboard`. |
 | `src/api/dailyWord.ts` | Client for `/api/word`. |
@@ -25,6 +27,13 @@ npm run dev        # http://localhost:5173 — serves the UI *and* /api/*
 
 The app runs right now — you can type, letters land on the board, rows submit.
 Every guess just comes back all-grey because `evaluateGuess` is a placeholder.
+
+### Changing the word length or guess count
+
+Both live in `src/game/types.ts`. The board reads them at runtime (they're
+passed to CSS as custom properties), and the components size themselves from
+them — but `api/words.ts` has to be swapped for a list of the matching length,
+or the API will hand back words that don't fit the board.
 
 ```bash
 npm run test         # run the logic tests once
@@ -36,7 +45,7 @@ npm run test:watch   # re-run as you edit
 `GET /api/word?date=YYYY-MM-DD` returns:
 
 ```json
-{ "date": "2026-08-24", "puzzleNumber": 1892, "word": "sugar", "length": 5 }
+{ "date": "2026-08-24", "puzzleNumber": 1892, "word": "wilderness", "length": 10 }
 ```
 
 The client sends its own local date, so the puzzle rolls over at each player's
@@ -74,6 +83,6 @@ handler signature.
 ## Ideas once the logic works
 
 - Persist today's board to `localStorage` so a refresh doesn't lose progress.
-- A share string (`Wordle 1892 4/6` + emoji squares) built from `Guess.states`.
+- A share string (`Wordle 1892 4/10` + emoji squares) built from `Guess.states`.
 - Reject non-words: ship a dictionary, or add `/api/validate`.
 - Stats: streak, guess distribution, an end-of-game modal.

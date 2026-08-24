@@ -17,10 +17,18 @@ import { MAX_GUESSES, WORD_LENGTH } from './types'
  *
  * The interesting part is repeated letters: each letter of the answer can only
  * be "used up" once, and exact matches claim their letter before any
- * present/yellow marks are handed out.
+ * present/yellow marks are handed out. With ten letters in play, guesses
+ * repeat letters constantly, so this matters more than it does at five.
  *
- *   evaluateGuess('speed', 'abide') -> absent, absent, present, absent, present
- *   evaluateGuess('geese', 'these') -> absent, absent, correct, absent, correct
+ *   evaluateGuess('absolutely', 'kilometers')
+ *     -> a a p c p a c c a a
+ *        ABSOLUTELY has two L's but KILOMETERS has one, so only the first
+ *        earns a yellow; the second is grey.
+ *
+ *   evaluateGuess('absolutely', 'accurately')
+ *     -> c a a a a p c c c c
+ *        Here the *second* L lines up exactly, so it takes green and the
+ *        earlier L gets nothing — greens are assigned before yellows.
  *
  * @param guess  lowercase, WORD_LENGTH letters
  * @param answer lowercase, WORD_LENGTH letters
@@ -59,7 +67,7 @@ export function getGameStatus(guesses: Guess[]): GameStatus {
  *
  * Real Wordle rejects anything that isn't in its dictionary. You could ship a
  * word list, or add an /api/validate endpoint that checks server-side.
- * Returning `true` here means "any 5 letters are fine".
+ * Returning `true` here means "any 10 letters are fine".
  */
 export function isValidGuess(word: string): boolean {
   // TODO: implement (optional).

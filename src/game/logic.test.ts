@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { deriveKeyboardStates, evaluateGuess, getGameStatus, isValidGuess } from './logic'
 import { MAX_GUESSES, type Guess } from './types'
+import { ANSWERS } from './words'
 
 // Shorthand: c = correct (green), p = present (yellow), a = absent (grey)
 const parse = (pattern: string) =>
@@ -105,11 +106,27 @@ describe('isValidGuess', () => {
     expect(isValidGuess('basketball')).toBe(true)
   })
 
+  it('accepts a real word that is not an answer', () => {
+    // The whole point of the bundled dictionary: openers like these are
+    // legitimate guesses even though they will never be the answer.
+    expect(isValidGuess('strawberry')).toBe(true)
+    expect(isValidGuess('rhinoceros')).toBe(true)
+  })
+
   it('rejects ten letters that are not a word', () => {
     expect(isValidGuess('qqqqqqqqqq')).toBe(false)
   })
 
+  it('rejects the wrong number of letters', () => {
+    expect(isValidGuess('cat')).toBe(false)
+    expect(isValidGuess('')).toBe(false)
+  })
+
   it('ignores case', () => {
     expect(isValidGuess('BASKETBALL')).toBe(true)
+  })
+
+  it('accepts every answer, so no puzzle is unguessable', () => {
+    expect(ANSWERS.filter((word) => !isValidGuess(word))).toEqual([])
   })
 })

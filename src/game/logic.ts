@@ -1,6 +1,6 @@
 import type { Guess, GameStatus, LetterState } from './types'
 import { MAX_GUESSES, WORD_LENGTH } from './types'
-import { ANSWERS } from './words'
+import { GUESSES_FLAT } from './guesses'
 
 /* ============================================================================
  * THIS FILE IS THE PART YOU WRITE.
@@ -102,17 +102,24 @@ export function getGameStatus(guesses: Guess[]): GameStatus {
   return 'playing'
 }
 
-/** Answer list as a set, built once, so validation is a hash lookup per guess. */
-const ALLOWED: ReadonlySet<string> = new Set(ANSWERS)
+/**
+ * The dictionary, unpacked once at load: one flat string of concatenated words
+ * sliced back into a set. Ships as a string rather than an array because the
+ * quotes and commas of a 35k-entry array cost ~30KB over the wire for nothing.
+ */
+const ALLOWED: ReadonlySet<string> = new Set(
+  Array.from({ length: GUESSES_FLAT.length / WORD_LENGTH }, (_, i) =>
+    GUESSES_FLAT.slice(i * WORD_LENGTH, (i + 1) * WORD_LENGTH),
+  ),
+)
 
 /**
  * Should this guess be accepted when the player hits Enter?
  *
- * The answer list doubles as the dictionary: a guess counts only if it is a
- * word that could itself have been today's answer. That is stricter than real
- * Wordle, which keeps a much larger list of allowed-but-never-chosen guesses,
- * so some perfectly good ten-letter words get turned away here. Widening it
- * means shipping that second list and checking both.
+ * Checked against a bundled dictionary of every ten-letter word, unioned with
+ * the answer list (see scripts/build-guesses.mjs) so no answer is unguessable.
+ * The list is bundled rather than fetched because the site is static and the
+ * free dictionary APIs either need a key we cannot hide or go down unannounced.
  */
 export function isValidGuess(word: string): boolean {
   return ALLOWED.has(word.toLowerCase())

@@ -1,5 +1,6 @@
 import type { Guess, GameStatus, LetterState } from './types'
 import { MAX_GUESSES, WORD_LENGTH } from './types'
+import { ANSWERS } from './words'
 
 /* ============================================================================
  * THIS FILE IS THE PART YOU WRITE.
@@ -37,7 +38,6 @@ import { MAX_GUESSES, WORD_LENGTH } from './types'
 
 
 export function evaluateGuess(guess: string, answer: string): LetterState[] {
-  // TODO: implement. Placeholder keeps the board rendering.
   const states: LetterState[] = Array.from({ length: WORD_LENGTH}, () => 'absent' as LetterState )
   const remaining = new Map<string, number>()
   guess = guess.toLowerCase()
@@ -76,15 +76,23 @@ export function evaluateGuess(guess: string, answer: string): LetterState[] {
  * should be absent from the map.
  */
 export function deriveKeyboardStates(guesses: Guess[]): Record<string, LetterState> {
-  // TODO: implement.
-  void guesses
-  return {}
+  const stateRanks = ['absent','present','correct']
+
+
+  const keyboardStates: Record<string, LetterState> = {}
+  for(let i = 0; i < guesses.length; i++){
+    for(let c = 0; c < guesses[i].word.length; c++){
+      if(stateRanks.indexOf(guesses[i].states[c]) > stateRanks.indexOf(keyboardStates[guesses[i].word[c]])){
+        keyboardStates[guesses[i].word.charAt(c)] = guesses[i].states[c]
+      }
+    }
+  }
+
+  return keyboardStates
 }
 
 /** Has the player won, lost, or are they still going? */
 export function getGameStatus(guesses: Guess[]): GameStatus {
-  // TODO: implement — won if the last guess was all `correct`,
-  // lost if MAX_GUESSES have been used without that.
   if(guesses.length === 0){
     return 'playing'
   }
@@ -94,15 +102,18 @@ export function getGameStatus(guesses: Guess[]): GameStatus {
   return 'playing'
 }
 
+/** Answer list as a set, built once, so validation is a hash lookup per guess. */
+const ALLOWED: ReadonlySet<string> = new Set(ANSWERS)
+
 /**
  * Should this guess be accepted when the player hits Enter?
  *
- * Real Wordle rejects anything that isn't in its dictionary. You could ship a
- * word list, or add an /api/validate endpoint that checks server-side.
- * Returning `true` here means "any 10 letters are fine".
+ * The answer list doubles as the dictionary: a guess counts only if it is a
+ * word that could itself have been today's answer. That is stricter than real
+ * Wordle, which keeps a much larger list of allowed-but-never-chosen guesses,
+ * so some perfectly good ten-letter words get turned away here. Widening it
+ * means shipping that second list and checking both.
  */
 export function isValidGuess(word: string): boolean {
-  // TODO: implement (optional).
-  void word
-  return true
+  return ALLOWED.has(word.toLowerCase())
 }

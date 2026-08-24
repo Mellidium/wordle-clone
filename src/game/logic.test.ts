@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { deriveKeyboardStates, evaluateGuess, getGameStatus } from './logic'
+import { deriveKeyboardStates, evaluateGuess, getGameStatus, isValidGuess } from './logic'
 import { MAX_GUESSES, type Guess } from './types'
 
 // Shorthand: c = correct (green), p = present (yellow), a = absent (grey)
@@ -97,5 +97,19 @@ describe('getGameStatus', () => {
       guess('acceptable', 'aaaaaaaaaa'),
     )
     expect(getGameStatus(wrong)).toBe('lost')
+  })
+})
+
+describe('isValidGuess', () => {
+  it('accepts a word from the answer list', () => {
+    expect(isValidGuess('basketball')).toBe(true)
+  })
+
+  it('rejects ten letters that are not a word', () => {
+    expect(isValidGuess('qqqqqqqqqq')).toBe(false)
+  })
+
+  it('ignores case', () => {
+    expect(isValidGuess('BASKETBALL')).toBe(true)
   })
 })

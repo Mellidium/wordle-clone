@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ANSWERS } from '../../api/words'
+import { ANSWERS } from './words'
 import { WORD_LENGTH } from './types'
 
 // The board is sized from WORD_LENGTH, so a stray word of another length would

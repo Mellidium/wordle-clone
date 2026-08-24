@@ -32,12 +32,40 @@ import { MAX_GUESSES, WORD_LENGTH } from './types'
  *
  * @param guess  lowercase, WORD_LENGTH letters
  * @param answer lowercase, WORD_LENGTH letters
+ *
  */
+
+
 export function evaluateGuess(guess: string, answer: string): LetterState[] {
   // TODO: implement. Placeholder keeps the board rendering.
-  void guess
-  void answer
-  return Array.from({ length: WORD_LENGTH }, () => 'absent' as LetterState)
+  const states: LetterState[] = Array.from({ length: WORD_LENGTH}, () => 'absent' as LetterState )
+  const remaining = new Map<string, number>()
+  guess = guess.toLowerCase()
+  answer = answer.toLowerCase()
+
+  for (const ch of answer) {
+    remaining.set(ch, (remaining.get(ch) ?? 0) + 1)
+  }
+
+  for(let i = 0; i < states.length; i++){
+    const ch = guess.charAt(i)
+    if(guess.charAt(i) == answer.charAt(i)){
+      remaining.set(ch, (remaining.get(ch) ?? 0) - 1)
+      states[i] = 'correct'
+    }
+  }
+
+  for(let i = 0; i < states.length; i++){
+    if (states[i] === 'correct') continue
+    const ch = guess.charAt(i)
+    const remainder = remaining.get(ch) ?? 0
+    if(remainder > 0){
+      states[i] = 'present'
+      remaining.set(ch, (remaining.get(ch) ?? 0) - 1)
+    }
+  }
+  
+  return states
 }
 
 /**
@@ -57,8 +85,12 @@ export function deriveKeyboardStates(guesses: Guess[]): Record<string, LetterSta
 export function getGameStatus(guesses: Guess[]): GameStatus {
   // TODO: implement — won if the last guess was all `correct`,
   // lost if MAX_GUESSES have been used without that.
-  void guesses
-  void MAX_GUESSES
+  if(guesses.length === 0){
+    return 'playing'
+  }
+  
+  if(guesses[guesses.length - 1].states.every((val) => val === 'correct')){ return 'won' }
+  if(guesses.length >= MAX_GUESSES){ return 'lost' }
   return 'playing'
 }
 
@@ -71,5 +103,6 @@ export function getGameStatus(guesses: Guess[]): GameStatus {
  */
 export function isValidGuess(word: string): boolean {
   // TODO: implement (optional).
-  return word.length === WORD_LENGTH
+  void word
+  return true
 }

@@ -6,32 +6,26 @@ import { MAX_GUESSES, WORD_LENGTH, type Guess } from './types'
  * Keystroke plumbing: owns the board state and hands the interesting questions
  * to the pure functions in `logic.ts`. Also listens for physical key presses so
  * the on-screen keyboard and a real keyboard drive the same code path.
+ *
+ * There's no reset — `<Game>` is keyed by the puzzle date, so a new day
+ * remounts the whole thing with fresh state.
  */
-export function useGame(answer: string | null) {
+export function useGame(answer: string) {
   const [guesses, setGuesses] = useState<Guess[]>([])
   const [currentGuess, setCurrentGuess] = useState('')
-  const [message, setMessage] = useState<string | null>(null)
+  const [rejection, setRejection] = useState<string | null>(null)
   const [shaking, setShaking] = useState(false)
 
   const status = useMemo(() => getGameStatus(guesses), [guesses])
   const keyStates = useMemo(() => deriveKeyboardStates(guesses), [guesses])
 
-  // Reset when a new day's word arrives.
-  useEffect(() => {
-    setGuesses([])
-    setCurrentGuess('')
-    setMessage(null)
-  }, [answer])
-
   const reject = useCallback((reason: string) => {
-    setMessage(reason)
+    setRejection(reason)
     setShaking(true)
     setTimeout(() => setShaking(false), 600)
   }, [])
 
   const submit = useCallback(() => {
-    if (!answer) return
-
     if (currentGuess.length < WORD_LENGTH) {
       return reject('Not enough letters')
     }
@@ -42,26 +36,26 @@ export function useGame(answer: string | null) {
     const states = evaluateGuess(currentGuess, answer)
     setGuesses((prev) => [...prev, { word: currentGuess, states }])
     setCurrentGuess('')
-    setMessage(null)
+    setRejection(null)
   }, [answer, currentGuess, reject])
 
   const handleKey = useCallback(
     (key: string) => {
-      if (!answer || status !== 'playing') return
+      if (status !== 'playing') return
 
       if (key === 'Enter') return submit()
       if (key === 'Backspace') {
-        setMessage(null)
+        setRejection(null)
         return setCurrentGuess((prev) => prev.slice(0, -1))
       }
       if (/^[a-zA-Z]$/.test(key)) {
-        setMessage(null)
+        setRejection(null)
         return setCurrentGuess((prev) =>
           prev.length < WORD_LENGTH ? prev + key.toLowerCase() : prev,
         )
       }
     },
-    [answer, status, submit],
+    [status, submit],
   )
 
   useEffect(() => {
@@ -74,10 +68,8 @@ export function useGame(answer: string | null) {
   }, [handleKey])
 
   // End-of-game banner. Swap in a real modal / share sheet whenever you like.
-  useEffect(() => {
-    if (status === 'won') setMessage('Got it!')
-    if (status === 'lost') setMessage(answer ? answer.toUpperCase() : 'Out of guesses')
-  }, [status, answer])
+  const message =
+    status === 'won' ? 'Got it!' : status === 'lost' ? answer.toUpperCase() : rejection
 
   return {
     guesses,

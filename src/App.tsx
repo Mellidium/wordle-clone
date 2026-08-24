@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchDailyWord, type DailyWord } from './api/dailyWord'
-import { Board } from './components/Board'
-import { Keyboard } from './components/Keyboard'
-import { useGame } from './game/useGame'
+import { Game } from './components/Game'
 
 export default function App() {
   const [daily, setDaily] = useState<DailyWord | null>(null)
@@ -19,8 +17,6 @@ export default function App() {
     return () => controller.abort()
   }, [])
 
-  const game = useGame(daily?.word ?? null)
-
   return (
     <div className="app">
       <header className="header">
@@ -29,21 +25,8 @@ export default function App() {
       </header>
 
       <main className="game">
-        <div className="message" role="status" aria-live="polite">
-          {error ?? game.message}
-        </div>
-
-        <Board
-          guesses={game.guesses}
-          currentGuess={game.currentGuess}
-          shaking={game.shaking}
-        />
-
-        <Keyboard
-          keyStates={game.keyStates}
-          onKey={game.handleKey}
-          disabled={!daily || game.status !== 'playing'}
-        />
+        {error && <div className="message">{error}</div>}
+        {daily && <Game key={daily.date} answer={daily.word} />}
       </main>
     </div>
   )

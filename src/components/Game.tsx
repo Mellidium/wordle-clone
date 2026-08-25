@@ -6,6 +6,7 @@ import { Confetti } from './Confetti'
 import { EvanBackdrop } from './EvanBackdrop'
 import { EvanReacts } from './EvanReacts'
 import { Keyboard } from './Keyboard'
+import { NoScope } from './NoScope'
 import { PanicMeter } from './PanicMeter'
 
 export function Game({ answer }: { answer: string }) {
@@ -43,6 +44,7 @@ export function Game({ answer }: { answer: string }) {
       />
 
       <Confetti active={game.status === 'won'} />
+      <NoScope active={game.status === 'won'} />
     </>
   )
 }

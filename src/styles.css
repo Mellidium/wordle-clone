@@ -79,8 +79,6 @@ body {
   flex: 1;
   flex-direction: column;
   align-items: center;
-  /* The board takes the free space with `margin-block: auto`, so the gap under
-     the header line and the gap above the keyboard come out equal. */
   justify-content: flex-start;
   gap: 0.5rem;
   padding: 0.5rem;
@@ -89,8 +87,6 @@ body {
 
 /* Message ------------------------------------------------------------- */
 
-/* Floats over the space above the board instead of reserving a row for itself,
-   which would push the board off-centre between the header and the keyboard. */
 .message {
   position: absolute;
   top: 0.5rem;
@@ -115,16 +111,11 @@ body {
 
 /* Board --------------------------------------------------------------- */
 
-/* --word-length and --max-guesses are set inline from the game constants, so
-   changing either in types.ts reshapes the grid with no CSS edit. */
 .board {
   margin-block: auto;
   display: grid;
   grid-template-rows: repeat(var(--max-guesses), auto);
-  /* Rows breathe a little wider than the letters within a row. */
   gap: 8px;
-  /* Wide enough to fill the column on a normal window; the dvh cap keeps the
-     eight rows on screen when the viewport is short. */
   width: min(100%, 60dvh);
 }
 
@@ -135,7 +126,6 @@ body {
 }
 
 .tile {
-  /* Square regardless of the row/column gaps, which drives the board height. */
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -294,9 +284,6 @@ body {
 
 /* Confetti ------------------------------------------------------------ */
 
-/* Full-viewport overlay. Fixed rather than absolute so the burst is not
-   clipped by .app's 500px column, and inert so it never eats a keypress or
-   a tap on the keyboard underneath. */
 .confetti {
   position: fixed;
   inset: 0;

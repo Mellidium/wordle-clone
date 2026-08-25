@@ -1,18 +1,15 @@
 import type { CSSProperties } from 'react'
 import { MAX_GUESSES, WORD_LENGTH, type Guess, type LetterState } from '../game/types'
 
-/** Per-tile delay of the reveal flip. Ten tiles at 250ms would drag. */
 const FLIP_STAGGER_MS = 100
-/** Kept in step with the `flip` animation in styles.css. */
+// Must match the `flip` animation in styles.css.
 const FLIP_DURATION_MS = 500
 
-/** How long a whole row takes to finish revealing, last tile included. */
 export const REVEAL_MS = (WORD_LENGTH - 1) * FLIP_STAGGER_MS + FLIP_DURATION_MS
 
 interface TileProps {
   letter: string
   state: LetterState
-  /** Position in the row — drives the staggered flip. */
   index: number
   revealed: boolean
 }

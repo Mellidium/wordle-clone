@@ -16,7 +16,6 @@ export function Keyboard({ keyStates, onKey, disabled }: KeyboardProps) {
       className={`key${wide ? ' wide' : ''}`}
       data-state={keyStates[value] ?? 'empty'}
       disabled={disabled}
-      // Keep focus on the document so physical typing keeps working.
       onMouseDown={(event) => event.preventDefault()}
       onClick={() => onKey(value)}
     >

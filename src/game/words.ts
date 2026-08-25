@@ -1,6 +1,5 @@
-// Answer list for the daily word — every entry must be WORD_LENGTH (10) letters.
-// Add/remove freely, but note the daily pick is a modulo over this array, so
-// changing its length or order reshuffles which day gets which word.
+// Every entry must be WORD_LENGTH letters; the daily pick is a modulo over this
+// array, so changing its length or order reshuffles which day gets which word.
 export const ANSWERS = [
   'absolutely', 'accelerate', 'acceptable', 'accessible', 'accidental', 'accomplish',
   'accordance', 'accountant', 'accounting', 'accurately', 'achievable', 'adjustment',

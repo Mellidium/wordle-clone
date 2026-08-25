@@ -3,8 +3,6 @@ import { getDailyWord } from './game/dailyWord'
 import { Game } from './components/Game'
 
 export default function App() {
-  // Picked once per mount — the date only changes at midnight, and `<Game>` is
-  // keyed by it, so a rollover remounts the board with the new word.
   const [daily] = useState(getDailyWord)
 
   return (

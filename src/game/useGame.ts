@@ -6,11 +6,16 @@ import {
   getGameStatus,
   isValidGuess,
 } from './logic'
+import { loadProgress, saveProgress } from './storage'
 import { MAX_GUESSES, WORD_LENGTH, type Guess } from './types'
 
-export function useGame(answer: string) {
-  const [guesses, setGuesses] = useState<Guess[]>([])
-  const [currentGuess, setCurrentGuess] = useState('')
+export function useGame(answer: string, puzzleNumber: number) {
+  // Read once per mount: later renders take the board from state, and App
+  // re-keys the game on the date, so a rollover past midnight remounts.
+  const restored = useMemo(() => loadProgress(puzzleNumber, answer), [answer, puzzleNumber])
+
+  const [guesses, setGuesses] = useState<Guess[]>(() => restored?.guesses ?? [])
+  const [currentGuess, setCurrentGuess] = useState(() => restored?.draft ?? '')
   const [rejection, setRejection] = useState<string | null>(null)
   const [shaking, setShaking] = useState(false)
 
@@ -56,6 +61,17 @@ export function useGame(answer: string) {
     },
     [status, submit],
   )
+
+  // Every keystroke writes, so a mid-word reload comes back to the same board
+  // -- typed letters included.
+  useEffect(() => {
+    saveProgress({
+      puzzleNumber,
+      answer,
+      guesses: guesses.map((guess) => guess.word),
+      draft: currentGuess,
+    })
+  }, [answer, currentGuess, guesses, puzzleNumber])
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {

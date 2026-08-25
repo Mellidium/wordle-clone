@@ -13,7 +13,7 @@ export default function App() {
       </header>
 
       <main className="game">
-        <Game key={daily.date} answer={daily.word} />
+        <Game key={daily.date} answer={daily.word} puzzleNumber={daily.puzzleNumber} />
       </main>
     </div>
   )

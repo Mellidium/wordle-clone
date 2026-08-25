@@ -9,8 +9,8 @@ import { Keyboard } from './Keyboard'
 import { NoScope } from './NoScope'
 import { PanicMeter } from './PanicMeter'
 
-export function Game({ answer }: { answer: string }) {
-  const game = useGame(answer)
+export function Game({ answer, puzzleNumber }: { answer: string; puzzleNumber: number }) {
+  const game = useGame(answer, puzzleNumber)
   const { status } = game
 
   // Cheer or jeer once the final row has finished flipping.

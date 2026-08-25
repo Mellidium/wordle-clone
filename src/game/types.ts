@@ -10,4 +10,4 @@ export interface Guess {
 export type GameStatus = 'playing' | 'won' | 'lost'
 
 export const WORD_LENGTH = 10
-export const MAX_GUESSES = 10
+export const MAX_GUESSES = 8

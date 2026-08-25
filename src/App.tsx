@@ -8,7 +8,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>Wordle</h1>
+        <h1>Evan's Wordle</h1>
         <span className="puzzle-number">#{daily.puzzleNumber}</span>
       </header>
 

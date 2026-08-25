@@ -43,6 +43,8 @@ body {
 }
 
 .app {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   height: 100dvh;
@@ -97,17 +99,6 @@ body {
   justify-content: center;
   transform: translateX(-50%);
   pointer-events: none;
-}
-
-.speak {
-  margin-left: 0.5rem;
-  padding: 0;
-  border: 0;
-  background: none;
-  font-size: 1rem;
-  line-height: 1;
-  cursor: pointer;
-  pointer-events: auto;
 }
 
 .message:not(:empty) {
@@ -300,6 +291,37 @@ body {
   .row.shake,
   .message:not(:empty) {
     animation-duration: 1ms;
+  }
+}
+
+/* Evan backdrop ------------------------------------------------------- */
+
+/* Negative z-index, not 0: this renders inside .app, and a positioned box at
+   z-index 0 paints over static siblings like the board and keyboard no matter
+   what the source order says. */
+.evan-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/* The veil waits out the tile flip so the reveal lands with the greens. */
+.evan-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: var(--veil);
+  transition: opacity 900ms ease var(--reveal-delay);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evan-backdrop::after {
+    transition-duration: 1ms;
   }
 }
 

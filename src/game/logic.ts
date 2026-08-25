@@ -49,6 +49,20 @@ export function deriveKeyboardStates(guesses: Guess[]): Record<string, LetterSta
   return keyboardStates
 }
 
+// Green positions accumulate: once a slot is locked in, it stays known even if
+// a later guess puts something else there.
+export function countLockedLetters(guesses: Guess[]): number {
+  const locked = new Set<number>()
+
+  for (const guess of guesses) {
+    for (let i = 0; i < guess.states.length; i++) {
+      if (guess.states[i] === 'correct') locked.add(i)
+    }
+  }
+
+  return locked.size
+}
+
 export function getGameStatus(guesses: Guess[]): GameStatus {
   if(guesses.length === 0){
     return 'playing'

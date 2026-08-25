@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { deriveKeyboardStates, evaluateGuess, getGameStatus, isValidGuess } from './logic'
+import {
+  countLockedLetters,
+  deriveKeyboardStates,
+  evaluateGuess,
+  getGameStatus,
+  isValidGuess,
+} from './logic'
 import { MAX_GUESSES, WORD_LENGTH, type Guess } from './types'
 
 export function useGame(answer: string) {
@@ -10,6 +16,7 @@ export function useGame(answer: string) {
 
   const status = useMemo(() => getGameStatus(guesses), [guesses])
   const keyStates = useMemo(() => deriveKeyboardStates(guesses), [guesses])
+  const locked = useMemo(() => countLockedLetters(guesses), [guesses])
 
   const reject = useCallback((reason: string) => {
     setRejection(reason)
@@ -69,6 +76,7 @@ export function useGame(answer: string) {
     message,
     shaking,
     keyStates,
+    locked,
     handleKey,
     remainingRows: MAX_GUESSES - guesses.length,
   }

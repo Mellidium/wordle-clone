@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { deriveKeyboardStates, evaluateGuess, getGameStatus, isValidGuess } from './logic'
-import { MAX_GUESSES, type Guess } from './types'
+import {
+  countLockedLetters,
+  deriveKeyboardStates,
+  evaluateGuess,
+  getGameStatus,
+  isValidGuess,
+} from './logic'
+import { MAX_GUESSES, WORD_LENGTH, type Guess } from './types'
 import { ANSWERS } from './words'
 
 // Shorthand: c = correct (green), p = present (yellow), a = absent (grey)
@@ -122,5 +128,31 @@ describe('isValidGuess', () => {
 
   it('accepts every answer, so no puzzle is unguessable', () => {
     expect(ANSWERS.filter((word) => !isValidGuess(word))).toEqual([])
+  })
+})
+
+describe('countLockedLetters', () => {
+  it('counts nothing on an empty board', () => {
+    expect(countLockedLetters([])).toBe(0)
+  })
+
+  it('counts the green positions in a single guess', () => {
+    expect(countLockedLetters([guess('technology', 'aappaccccc')])).toBe(5)
+  })
+
+  it('accumulates green positions across guesses', () => {
+    expect(
+      countLockedLetters([guess('technology', 'caaaaaaaaa'), guess('psychology', 'aaaaaacccc')]),
+    ).toBe(5)
+  })
+
+  it('does not double-count a position locked in twice', () => {
+    expect(
+      countLockedLetters([guess('technology', 'cccaaaaaaa'), guess('psychology', 'ccaaaaaaaa')]),
+    ).toBe(3)
+  })
+
+  it('reaches the word length on a winning guess', () => {
+    expect(countLockedLetters([guess('psychology', 'cccccccccc')])).toBe(WORD_LENGTH)
   })
 })

@@ -1,35 +1,33 @@
 import { useEffect } from 'react'
 import { useGame } from '../game/useGame'
-import { canSpeak, speakWord } from '../game/speak'
+import { boo, cheer } from '../game/speak'
 import { Board, REVEAL_MS } from './Board'
 import { Confetti } from './Confetti'
+import { EvanBackdrop } from './EvanBackdrop'
 import { EvanReacts } from './EvanReacts'
 import { Keyboard } from './Keyboard'
 import { PanicMeter } from './PanicMeter'
 
 export function Game({ answer }: { answer: string }) {
   const game = useGame(answer)
-  const over = game.status !== 'playing'
+  const { status } = game
 
-  // Read the answer aloud once the final row has finished flipping.
+  // Cheer or jeer once the final row has finished flipping.
   useEffect(() => {
-    if (!over) return
-    const timer = window.setTimeout(() => speakWord(answer), REVEAL_MS)
+    if (status === 'playing') return
+    const timer = window.setTimeout(status === 'won' ? cheer : boo, REVEAL_MS)
     return () => {
       window.clearTimeout(timer)
       window.speechSynthesis?.cancel()
     }
-  }, [over, answer])
+  }, [status])
 
   return (
     <>
+      <EvanBackdrop locked={game.locked} />
+
       <div className="message" role="status" aria-live="polite">
         {game.message}
-        {over && canSpeak() && (
-          <button className="speak" onClick={() => speakWord(answer)} aria-label="Say the word">
-            🔊
-          </button>
-        )}
       </div>
 
       <div className="board-area">

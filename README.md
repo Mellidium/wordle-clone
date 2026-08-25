@@ -1,7 +1,7 @@
 # Wordle clone
 
 A React + TypeScript shell for a Wordle clone, played with **10-letter words
-and 10 guesses**. The UI, keyboard handling, and the daily-word API are done —
+and 8 guesses**. The UI, keyboard handling, and the daily-word API are done —
 the game logic is left for you to write.
 
 ## Getting started

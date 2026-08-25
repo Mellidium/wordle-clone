@@ -18,7 +18,6 @@ describe('evaluateGuess', () => {
   })
 
   it('marks letters not in the answer', () => {
-    // ACCEPTABLE and GROUNDWORK share no letters at all.
     expect(evaluateGuess('acceptable', 'groundwork')).toEqual(parse('aaaaaaaaaa'))
   })
 
@@ -27,13 +26,10 @@ describe('evaluateGuess', () => {
   })
 
   it('does not over-count a repeated letter in the guess', () => {
-    // ABSOLUTELY has two L's, KILOMETERS only one — the second L stays grey.
     expect(evaluateGuess('absolutely', 'kilometers')).toEqual(parse('aapcpaccaa'))
   })
 
   it('lets exact matches claim their letter first', () => {
-    // The trailing L lines up with ACCURATELY's only L, so the earlier one
-    // gets nothing even though it is scanned first.
     expect(evaluateGuess('absolutely', 'accurately')).toEqual(parse('caaaapcccc'))
   })
 })
@@ -107,8 +103,6 @@ describe('isValidGuess', () => {
   })
 
   it('accepts a real word that is not an answer', () => {
-    // The whole point of the bundled dictionary: openers like these are
-    // legitimate guesses even though they will never be the answer.
     expect(isValidGuess('strawberry')).toBe(true)
     expect(isValidGuess('rhinoceros')).toBe(true)
   })

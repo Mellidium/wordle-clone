@@ -2,14 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { deriveKeyboardStates, evaluateGuess, getGameStatus, isValidGuess } from './logic'
 import { MAX_GUESSES, WORD_LENGTH, type Guess } from './types'
 
-/**
- * Keystroke plumbing: owns the board state and hands the interesting questions
- * to the pure functions in `logic.ts`. Also listens for physical key presses so
- * the on-screen keyboard and a real keyboard drive the same code path.
- *
- * There's no reset — `<Game>` is keyed by the puzzle date, so a new day
- * remounts the whole thing with fresh state.
- */
 export function useGame(answer: string) {
   const [guesses, setGuesses] = useState<Guess[]>([])
   const [currentGuess, setCurrentGuess] = useState('')
@@ -67,7 +59,6 @@ export function useGame(answer: string) {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [handleKey])
 
-  // End-of-game banner. Swap in a real modal / share sheet whenever you like.
   const message =
     status === 'won' ? 'Got it!' : status === 'lost' ? answer.toUpperCase() : rejection
 

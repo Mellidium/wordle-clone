@@ -1,7 +1,5 @@
-/** How a single letter of a submitted guess is scored. */
 export type LetterState = 'empty' | 'absent' | 'present' | 'correct'
 
-/** A guess the player has already submitted, plus its scoring. */
 export interface Guess {
   word: string
   states: LetterState[]

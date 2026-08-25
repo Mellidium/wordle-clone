@@ -1,13 +1,5 @@
-/**
- * Regenerates src/game/guesses.ts from the `an-array-of-english-words` package.
- *
- * That package holds ~275k words of every length; only the WORD_LENGTH ones are
- * any use to us, and bundling the rest would cost megabytes. So we filter here,
- * at build time, and commit the result — the npm package stays a devDependency
- * and never reaches the browser.
- *
- * Run with `npm run build:guesses` after changing WORD_LENGTH or the answer list.
- */
+// Regenerates src/game/guesses.ts from `an-array-of-english-words`.
+// Run with `npm run build:guesses` after changing WORD_LENGTH or the answer list.
 import { writeFileSync } from 'node:fs'
 import words from 'an-array-of-english-words' with { type: 'json' }
 import { ANSWERS } from '../src/game/words.ts'
@@ -18,13 +10,11 @@ const fits = new RegExp(`^[a-z]{${WORD_LENGTH}}$`)
 const misfits = ANSWERS.filter((w) => !fits.test(w))
 if (misfits.length) throw new Error(`answers are not ${WORD_LENGTH} letters: ${misfits.join(', ')}`)
 
-// The answer list is unioned in because a handful of answers (proper nouns and
-// the like: fahrenheit, wednesdays) aren't in the dictionary, and every answer
-// must be guessable.
+// Union in the answers: a few (fahrenheit, wednesdays) aren't in the dictionary
+// and every answer has to be guessable.
 const all = [...new Set([...words.filter((w) => fits.test(w)), ...ANSWERS])].sort()
 
-// Stored as one flat string, sliced back apart at load. A quoted array of the
-// same words costs ~30KB more over the wire and buys nothing.
+// One flat string rather than a quoted array: ~30KB smaller over the wire.
 const flat = all.join('')
 
 writeFileSync(
